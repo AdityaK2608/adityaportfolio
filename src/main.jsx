@@ -37,28 +37,48 @@ const experience = [
   ]}
 ];
 
+const toolLogs = [
+  ['QRADAR', 'SIEM', 'CORRELATION ENGINE READY'],
+  ['NESSUS', 'VULN', 'ASSET SCAN PIPELINE READY'],
+  ['CROWDSTRIKE', 'EDR', 'ENDPOINT TELEMETRY ACTIVE'],
+  ['SENTINELONE', 'EDR', 'THREAT RESPONSE ONLINE'],
+  ['MISP', 'CTI', 'IOC ENRICHMENT ONLINE'],
+  ['MITRE ATT&CK', 'CTI', 'TECHNIQUE MAPPING READY'],
+  ['AZURE', 'CLOUD', 'SECURITY WORKLOAD READY'],
+  ['LINUX', 'OS', 'SYSTEM TELEMETRY READY'],
+];
+
 function Matrix() {
   useEffect(() => {
     const canvas = document.querySelector('#matrix'); if (!canvas) return;
     const ctx = canvas.getContext('2d'); let animation; const chars = '01{}[]<>/\\$#@*+-=ABCDEFGHIJKLMNOPQRSTUVWXYZ'; const font = 13;
     const resize = () => { canvas.width = window.innerWidth; canvas.height = canvas.parentElement.offsetHeight; };
     resize(); let columns = Math.ceil(canvas.width / font); let drops = Array(columns).fill(1).map(() => Math.random() * -50);
-    const draw = () => { ctx.fillStyle = 'rgba(5,8,11,.09)'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.fillStyle='rgba(0,245,160,.28)'; ctx.font=`${font}px monospace`; for(let i=0;i<drops.length;i++){ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*font,drops[i]*font);if(drops[i]*font>canvas.height&&Math.random()>.975)drops[i]=0;drops[i]+=.45;} animation=requestAnimationFrame(draw); };
+    const draw = () => { ctx.fillStyle='rgba(5,8,11,.09)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='rgba(0,245,160,.28)';ctx.font=`${font}px monospace`;for(let i=0;i<drops.length;i++){ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*font,drops[i]*font);if(drops[i]*font>canvas.height&&Math.random()>.975)drops[i]=0;drops[i]+=.45;}animation=requestAnimationFrame(draw); };
     draw(); window.addEventListener('resize', resize); return () => { cancelAnimationFrame(animation); window.removeEventListener('resize', resize); };
   }, []);
   return <canvas id="matrix" aria-hidden="true" />;
 }
 
+function ToolTerminal() {
+  const [visible, setVisible] = useState(3);
+  useEffect(() => { const timer=setInterval(()=>setVisible(v=>v>=toolLogs.length?3:v+1),900); return()=>clearInterval(timer); },[]);
+  return <div className="tool-terminal" aria-label="Security tools telemetry">
+    <div className="terminal-top"><span className="terminal-dots"><i/><i/><i/></span><span>security@aditya:~</span><span className="terminal-live"><b/> LIVE</span></div>
+    <div className="terminal-body"><div className="terminal-command"><span className="accent">$</span> ./security-stack --status</div>{toolLogs.slice(0,visible).map(([tool,type,status],i)=><div className="log-line" key={`${tool}-${i}`}><span className="log-time">[{String(10+i).padStart(2,'0')}:2{i}:4{i}]</span><span className="log-ok">OK</span><span className="log-tool">{tool}</span><span className="log-type">{type}</span><span className="log-status">{status}</span></div>)}<div className="terminal-cursor"><span className="accent">$</span> monitoring<span className="cursor">_</span></div></div>
+  </div>;
+}
+
 function App() {
   const [typed, setTyped] = useState(''); const [dark, setDark] = useState(true); const target='Aditya Kumar — Cyber Security Engineer';
-  useEffect(() => { let i=0; const timer=setInterval(()=>{setTyped(target.slice(0,i));i+=1;if(i>target.length)clearInterval(timer)},45);return()=>clearInterval(timer)},[]);
+  useEffect(() => { let i=0;const timer=setInterval(()=>{setTyped(target.slice(0,i));i+=1;if(i>target.length)clearInterval(timer)},45);return()=>clearInterval(timer)},[]);
   useEffect(() => { const observer=new IntersectionObserver(entries=>entries.forEach(e=>e.isIntersecting&&e.target.classList.add('visible')),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));return()=>observer.disconnect()},[]);
   return <div className={dark?'app dark':'app light'}>
     <header className="nav"><a className="brand" href="#top"><span className="prompt">./</span>aditya<span className="accent">@sec</span></a><nav>{['about','skills','certifications','experience','contact'].map(x=><a key={x} href={`#${x}`}>{x}</a>)}</nav><button className="theme" onClick={()=>setDark(v=>!v)} aria-label="Toggle theme">{dark?'☼':'☾'}</button></header>
     <main id="top">
-      <section className="hero"><Matrix/><div className="hero-content"><div className="terminal-line"><span className="accent">&gt;</span> whoami</div><h1>{typed}<span className="cursor">_</span></h1><p>Enterprise security platform engineering, SIEM administration, vulnerability management and endpoint security.</p><div className="hero-meta"><span>HYDERABAD, INDIA</span><span>•</span><span>2+ YEARS</span></div><div className="actions"><a className="btn primary" href="#contact">Initialize Contact</a><a className="btn" href="/adityaportfolio/resume.pdf" download>Download CV</a><a className="btn" href="https://github.com/AdityaK2608" target="_blank" rel="noreferrer">GitHub ↗</a></div></div><div className="scroll-hint">scroll_to_explore ↓</div></section>
+      <section className="hero"><Matrix/><div className="scanlines"/><div className="hero-grid"/><div className="hero-content"><div className="terminal-line"><span className="accent">&gt;</span> whoami <span className="status-chip"><b/> SESSION SECURE</span></div><h1>{typed}<span className="cursor">_</span></h1><p>Enterprise security platform engineering, SIEM administration, vulnerability management and endpoint security.</p><div className="hero-meta"><span>HYDERABAD, INDIA</span><span>•</span><span>2+ YEARS</span><span>•</span><span>THREAT OPS</span></div><ToolTerminal/><div className="actions"><a className="btn primary" href="#contact">Initialize Contact</a><a className="btn" href="/adityaportfolio/resume.pdf" download>Download CV</a><a className="btn" href="https://github.com/AdityaK2608" target="_blank" rel="noreferrer">GitHub ↗</a></div></div><div className="scroll-hint">scroll_to_explore ↓</div></section>
       <section id="about" className="section reveal"><div className="section-label">01 / about</div><div className="about-grid"><div><h2>Security, systems,<br/><span className="accent">and visibility.</span></h2></div><p>Cyber Security Engineer with 2+ years of experience in enterprise security platform engineering, specializing in SIEM administration, vulnerability management and endpoint security. Hands-on experience spans IBM QRadar across 500+ MSSP client environments, plus Tenable Nessus, CrowdStrike Falcon, SentinelOne and Trend Micro HBSS.</p></div></section>
-      <section id="skills" className="section reveal"><div className="section-label">02 / capabilities</div><h2>Security stack<span className="accent">_</span></h2><div className="skill-grid">{Object.entries(skills).map(([group,items])=><article className="skill-card" key={group}><div className="scan"><span>{group}</span><span className="scan-bar"/></div><div className="tags">{items.map(item=><span key={item}>{item}</span>)}</div></article>)}</div></section>
+      <section id="skills" className="section reveal"><div className="section-label">02 / capabilities</div><h2>Security stack<span className="accent">_</span></h2><div className="skill-grid">{Object.entries(skills).map(([group,items],idx)=><article className="skill-card" key={group}><div className="scan"><span>{group}</span><span className="scan-bar"/></div><div className="tags">{items.map((item,i)=><span key={item} style={{'--delay':`${(idx+i)*.06}s`}}>{item}<i/></span>)}</div></article>)}</div></section>
       <section id="certifications" className="section reveal"><div className="section-label">03 / credentials</div><h2>Certifications<span className="accent">_</span></h2><div className="cert-list">{certifications.map(([code,name,date])=><article className="cert" key={code}><div className="cert-code">{code}</div><div><strong>{name}</strong><small>Issued {date}</small></div><span className="verified">CERT</span></article>)}</div></section>
       <section id="experience" className="section reveal"><div className="section-label">04 / experience</div><h2>Operational history<span className="accent">_</span></h2><div className="timeline">{experience.map((job,idx)=><article className="job" key={job.role}><div className="job-marker">0{idx+1}</div><div className="job-main"><div className="job-head"><div><h3>{job.role}</h3><p>{job.company} · {job.location}</p></div><time>{job.dates}</time></div><ul>{job.points.map(point=><li key={point}>{point}</li>)}</ul></div></article>)}</div></section>
       <section id="contact" className="section contact reveal"><div className="section-label">05 / contact</div><h2>Open a secure channel<span className="accent">_</span></h2><div className="contact-box"><div><div className="terminal-line"><span className="accent">&gt;</span> ./connect --with Aditya</div><p>For cybersecurity opportunities, security engineering conversations or professional collaboration.</p></div><div className="contact-links"><a href="mailto:singhaditya2608@gmail.com">singhaditya2608@gmail.com</a><a href="https://linkedin.com/in/adityak2608" target="_blank" rel="noreferrer">LinkedIn ↗</a><a href="https://github.com/AdityaK2608" target="_blank" rel="noreferrer">GitHub ↗</a></div></div></section>

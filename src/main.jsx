@@ -1,17 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
-import './tool-logos.css';
 
 const toolStream = [
-  ['QRADAR', 'SIEM', 'correlation-engine', 'ONLINE', 'QR'],
-  ['NESSUS', 'VULN', 'asset-scanner', 'SCANNING', 'N'],
-  ['CROWDSTRIKE', 'EDR', 'endpoint-telemetry', 'ONLINE', 'CS'],
-  ['SENTINELONE', 'EDR', 'threat-response', 'ONLINE', 'S1'],
-  ['MISP', 'CTI', 'ioc-enrichment', 'SYNCING', 'M'],
-  ['MITRE ATT&CK', 'THREAT', 'technique-mapping', 'READY', 'ATT'],
-  ['AZURE', 'CLOUD', 'identity-security', 'ONLINE', 'AZ'],
-  ['LINUX', 'OS', 'security-operations', 'ONLINE', 'LX'],
+  ['QRADAR', 'SIEM', 'correlation-engine', 'ONLINE', 'ibm', 'IBM QRadar'],
+  ['NESSUS', 'VULN', 'asset-scanner', 'SCANNING', 'tenable', 'Tenable Nessus'],
+  ['CROWDSTRIKE', 'EDR', 'endpoint-telemetry', 'ONLINE', 'crowdstrike', 'CrowdStrike Falcon'],
+  ['SENTINELONE', 'EDR', 'threat-response', 'ONLINE', 'sentinelone', 'SentinelOne'],
+  ['MISP', 'CTI', 'ioc-enrichment', 'SYNCING', 'misp', 'MISP'],
+  ['MITRE ATT&CK', 'THREAT', 'technique-mapping', 'READY', 'mitre', 'MITRE ATT&CK'],
+  ['AZURE', 'CLOUD', 'identity-security', 'ONLINE', 'microsoftazure', 'Microsoft Azure'],
+  ['LINUX', 'OS', 'security-operations', 'ONLINE', 'linux', 'Linux'],
 ];
 
 const skills = {
@@ -58,22 +57,46 @@ function LiveTerminal() {
 
 function Radar(){return <div className="radar" aria-label="Security monitoring visualization"><div className="radar-sweep"/><div className="radar-ring r1"/><div className="radar-ring r2"/><div className="radar-ring r3"/><b className="blip b1"/><b className="blip b2"/><b className="blip b3"/><span className="radar-label">SOC / LIVE</span></div>}
 
+function ToolLogo({slug,name,code}) {
+  const [failed,setFailed]=useState(false);
+  return <div className="tool-logo-wrap" title={name}>
+    {!failed ? <img className="tool-logo-img" src={`https://cdn.simpleicons.org/${slug}`} alt={`${name} logo`} onError={()=>setFailed(true)}/> : <span className="tool-logo-fallback">{code}</span>}
+    <div className="tool-tooltip"><strong>{name}</strong><span>IDENTITY VERIFIED · HOVER SIGNAL</span></div>
+  </div>;
+}
+
+const logoCss = `
+.tool-logo-wrap{position:relative;width:30px;height:30px;display:grid;place-items:center;border:1px solid rgba(0,245,160,.18);border-radius:7px;background:rgba(0,245,160,.035);transition:transform .25s,border-color .25s,box-shadow .25s;z-index:2}
+.tool-logo-img{width:18px;height:18px;object-fit:contain;filter:grayscale(1) brightness(1.7);transition:filter .25s,transform .25s}
+.tool-logo-fallback{font:700 8px 'JetBrains Mono',monospace;color:var(--accent)}
+.tool-logo-wrap:after{content:'';position:absolute;inset:-4px;border:1px solid var(--accent);border-radius:9px;opacity:0;transform:scale(.7);pointer-events:none}
+.tool-logo-wrap:hover{transform:translateY(-2px) scale(1.08);border-color:var(--accent);box-shadow:0 0 18px color-mix(in srgb,var(--accent) 25%,transparent),inset 0 0 12px color-mix(in srgb,var(--accent) 8%,transparent)}
+.tool-logo-wrap:hover:after{opacity:.65;animation:logoPulse .9s ease-out}
+.tool-logo-wrap:hover .tool-logo-img{filter:grayscale(0) brightness(1.15);transform:scale(1.15)}
+.tool-tooltip{position:absolute;left:38px;top:50%;transform:translateY(-50%) translateX(-5px);opacity:0;pointer-events:none;white-space:nowrap;padding:8px 10px;background:#061014;border:1px solid rgba(0,245,160,.35);box-shadow:0 10px 28px rgba(0,0,0,.4);border-radius:6px;transition:.18s;z-index:20}
+.tool-tooltip strong{display:block;color:var(--text);font:700 10px 'JetBrains Mono',monospace}.tool-tooltip span{display:block;margin-top:3px;color:var(--accent);font:500 7px 'JetBrains Mono',monospace}
+.tool-logo-wrap:hover .tool-tooltip{opacity:1;transform:translateY(-50%) translateX(0)}
+@keyframes logoPulse{0%{transform:scale(.7);opacity:.8}100%{transform:scale(1.45);opacity:0}}
+@media(max-width:850px){.tool-tooltip{display:none}.tool-logo-wrap{width:28px;height:28px}}
+`;
+
 function App(){
   const [typed,setTyped]=useState(''); const [dark,setDark]=useState(true); const target='Aditya Kumar — Cyber Security Engineer';
   useEffect(()=>{let i=0;const t=setInterval(()=>{setTyped(target.slice(0,i));i++;if(i>target.length)clearInterval(t)},42);return()=>clearInterval(t)},[]);
   useEffect(()=>{const o=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add('visible')),{threshold:.08});document.querySelectorAll('.reveal').forEach(x=>o.observe(x));return()=>o.disconnect()},[]);
   return <div className={dark?'app dark':'app light'}>
+    <style>{logoCss}</style>
     <header className="nav"><a className="brand" href="#top"><span className="prompt">./</span>aditya<span className="accent">@sec</span></a><nav>{['about','skills','certifications','experience','contact'].map(x=><a key={x} href={`#${x}`}>{x}</a>)}</nav><button className="theme" onClick={()=>setDark(v=>!v)}>{dark?'LIGHT_MODE':'DARK_MODE'}</button></header>
     <main id="top">
       <section className="hero"><Matrix/><div className="scanlines"/><div className="hud-corners"/><div className="hero-content">
         <div className="status-row"><span className="live-dot"/> SYSTEM OPERATIONAL <span className="sep">//</span> SECURITY PROFILE <span className="accent">ACTIVE</span></div>
         <div className="hero-layout"><div className="hero-copy"><div className="terminal-line"><span className="accent">&gt;</span> whoami</div><h1>{typed}<span className="cursor">_</span></h1><p>Enterprise security platform engineering, SIEM administration, vulnerability management and endpoint security.</p><div className="hero-meta"><span>HYDERABAD, INDIA</span><span>•</span><span>2+ YEARS</span><span>•</span><span>BLUE TEAM</span></div><div className="actions"><a className="btn primary" href="#contact">Initialize Contact</a><a className="btn" href="/adityaportfolio/resume.pdf" download>Download CV</a><a className="btn" href="https://github.com/AdityaK2608" target="_blank" rel="noreferrer">GitHub ↗</a></div></div><div className="hero-side"><Radar/><div className="metric-grid"><div><strong>500+</strong><small>CLIENT ENV</small></div><div><strong>10K+</strong><small>ENDPOINTS</small></div><div><strong>1K+</strong><small>LOG SOURCES</small></div><div><strong>50+</strong><small>SIEM RULES</small></div></div></div></div>
-        <div className="tool-console"><div className="console-title"><span>TOOLCHAIN TELEMETRY</span><span className="streaming">● STREAMING</span></div><div className="tool-grid">{toolStream.map(([name,type,service,status,logo],i)=><div className="tool-log" key={name}><span className="tool-logo" data-logo={logo} aria-hidden="true">{logo}</span><span className="log-time">{`0${i+1}:2${i}:0${i}`}</span><span className="ok">[OK]</span><strong>{name}</strong><span className="log-type">{type}</span><span className="service">{service}</span><span className="state">{status}</span></div>)}</div></div>
+        <div className="tool-console"><div className="console-title"><span>TOOLCHAIN TELEMETRY</span><span className="streaming">● STREAMING</span></div><div className="tool-grid">{toolStream.map(([name,type,service,status,slug,fullName],i)=><div className="tool-log" key={name}><ToolLogo slug={slug} name={fullName} code={name.slice(0,2)}/><span className="log-time">{`0${i+1}:2${i}:0${i}`}</span><span className="ok">[OK]</span><strong>{name}</strong><span className="log-type">{type}</span><span className="service">{service}</span><span className="state">{status}</span></div>)}</div></div>
         <LiveTerminal/>
       </div><div className="scroll-hint">scroll_to_explore ↓</div></section>
 
       <section id="about" className="section reveal"><div className="section-label">01 / about</div><div className="about-grid"><div><h2>Security, systems,<br/><span className="accent">and visibility.</span></h2></div><p>Cyber Security Engineer with 2+ years of experience in enterprise security platform engineering, specializing in SIEM administration, vulnerability management and endpoint security. Hands-on experience spans IBM QRadar across 500+ MSSP client environments, plus Tenable Nessus, CrowdStrike Falcon, SentinelOne and Trend Micro HBSS.</p></div></section>
-      <section id="skills" className="section reveal"><div className="section-label">02 / capabilities</div><h2>Security stack<span className="accent">_</span></h2><div className="skill-grid">{Object.entries(skills).map(([group,items],i)=><article className="skill-card" key={group}><div className="scan"><span>{`SCAN_0${i+1}`} · {group}</span><span className="scan-bar"/></div><div className="tags">{items.map((item,j)=><span key={item} style={{'--delay':`${j*.35}s`}}>{item}<i/></span>)}</div></article>)}</div></section>
+      <section id="skills" className="section reveal"><div className="section-label">02 / capabilities</div><h2>Security stack<span className="accent">_</span></h2><div className="skill-grid">{Object.entries(skills).map(([group,items],i)=><article className="skill-card" key={group}><div className="scan"><span>{`SCAN_0${i+1}`} · {group}</span><span className="scan-bar"/></div><div className="tags">{items.map(item=><span key={item}>{item}</span>)}</div></article>)}</div></section>
       <section id="certifications" className="section reveal"><div className="section-label">03 / credentials</div><h2>Certifications<span className="accent">_</span></h2><div className="cert-list">{certifications.map(([code,name,date])=><article className="cert" key={code}><div className="cert-code">{code}</div><div><strong>{name}</strong><small>Issued {date}</small></div><span className="verified">VERIFIED</span></article>)}</div></section>
       <section id="experience" className="section reveal"><div className="section-label">04 / experience</div><h2>Operational history<span className="accent">_</span></h2><div className="timeline">{experience.map((job,idx)=><article className="job" key={job.role}><div className="job-marker">0{idx+1}</div><div className="job-main"><div className="job-head"><div><h3>{job.role}</h3><p>{job.company} · {job.location}</p></div><time>{job.dates}</time></div><ul>{job.points.map(point=><li key={point}>{point}</li>)}</ul></div></article>)}</div></section>
       <section id="contact" className="section contact reveal"><div className="section-label">05 / contact</div><h2>Open a secure channel<span className="accent">_</span></h2><div className="contact-box"><div><div className="terminal-line"><span className="accent">&gt;</span> ./connect --with Aditya</div><p>For cybersecurity opportunities, security engineering conversations or professional collaboration.</p></div><div className="contact-links"><a href="mailto:singhaditya2608@gmail.com">singhaditya2608@gmail.com</a><a href="https://linkedin.com/in/adityak2608" target="_blank" rel="noreferrer">LinkedIn ↗</a><a href="https://github.com/AdityaK2608" target="_blank" rel="noreferrer">GitHub ↗</a></div></div></section>

@@ -3,14 +3,14 @@ import { createRoot } from 'react-dom/client';
 import './styles.css';
 
 const toolStream = [
-  ['QRADAR', 'SIEM', 'correlation-engine', 'ONLINE'],
-  ['NESSUS', 'VULN', 'asset-scanner', 'SCANNING'],
-  ['CROWDSTRIKE', 'EDR', 'endpoint-telemetry', 'ONLINE'],
-  ['SENTINELONE', 'EDR', 'threat-response', 'ONLINE'],
-  ['MISP', 'CTI', 'ioc-enrichment', 'SYNCING'],
-  ['MITRE ATT&CK', 'THREAT', 'technique-mapping', 'READY'],
-  ['AZURE', 'CLOUD', 'identity-security', 'ONLINE'],
-  ['LINUX', 'OS', 'security-operations', 'ONLINE'],
+  ['QRADAR', 'SIEM', 'correlation-engine', 'ONLINE', 'QR'],
+  ['NESSUS', 'VULN', 'asset-scanner', 'SCANNING', 'N'],
+  ['CROWDSTRIKE', 'EDR', 'endpoint-telemetry', 'ONLINE', 'CS'],
+  ['SENTINELONE', 'EDR', 'threat-response', 'ONLINE', 'S1'],
+  ['MISP', 'CTI', 'ioc-enrichment', 'SYNCING', 'M'],
+  ['MITRE ATT&CK', 'THREAT', 'technique-mapping', 'READY', 'ATT'],
+  ['AZURE', 'CLOUD', 'identity-security', 'ONLINE', 'AZ'],
+  ['LINUX', 'OS', 'security-operations', 'ONLINE', 'LX'],
 ];
 
 const skills = {
@@ -67,12 +67,12 @@ function App(){
       <section className="hero"><Matrix/><div className="scanlines"/><div className="hud-corners"/><div className="hero-content">
         <div className="status-row"><span className="live-dot"/> SYSTEM OPERATIONAL <span className="sep">//</span> SECURITY PROFILE <span className="accent">ACTIVE</span></div>
         <div className="hero-layout"><div className="hero-copy"><div className="terminal-line"><span className="accent">&gt;</span> whoami</div><h1>{typed}<span className="cursor">_</span></h1><p>Enterprise security platform engineering, SIEM administration, vulnerability management and endpoint security.</p><div className="hero-meta"><span>HYDERABAD, INDIA</span><span>•</span><span>2+ YEARS</span><span>•</span><span>BLUE TEAM</span></div><div className="actions"><a className="btn primary" href="#contact">Initialize Contact</a><a className="btn" href="/adityaportfolio/resume.pdf" download>Download CV</a><a className="btn" href="https://github.com/AdityaK2608" target="_blank" rel="noreferrer">GitHub ↗</a></div></div><div className="hero-side"><Radar/><div className="metric-grid"><div><strong>500+</strong><small>CLIENT ENV</small></div><div><strong>10K+</strong><small>ENDPOINTS</small></div><div><strong>1K+</strong><small>LOG SOURCES</small></div><div><strong>50+</strong><small>SIEM RULES</small></div></div></div></div>
-        <div className="tool-console"><div className="console-title"><span>TOOLCHAIN TELEMETRY</span><span className="streaming">● STREAMING</span></div><div className="tool-grid">{toolStream.map(([name,type,service,status],i)=><div className="tool-log" key={name}><span className="log-time">{`0${i+1}:2${i}:0${i}`}</span><span className="ok">[OK]</span><strong>{name}</strong><span className="log-type">{type}</span><span className="service">{service}</span><span className="state">{status}</span></div>)}</div></div>
+        <div className="tool-console"><div className="console-title"><span>TOOLCHAIN TELEMETRY</span><span className="streaming">● STREAMING</span></div><div className="tool-grid">{toolStream.map(([name,type,service,status,logo],i)=><div className="tool-log" key={name}><span className="tool-logo" data-logo={logo} aria-hidden="true">{logo}</span><span className="log-time">{`0${i+1}:2${i}:0${i}`}</span><span className="ok">[OK]</span><strong>{name}</strong><span className="log-type">{type}</span><span className="service">{service}</span><span className="state">{status}</span></div>)}</div></div>
         <LiveTerminal/>
       </div><div className="scroll-hint">scroll_to_explore ↓</div></section>
 
       <section id="about" className="section reveal"><div className="section-label">01 / about</div><div className="about-grid"><div><h2>Security, systems,<br/><span className="accent">and visibility.</span></h2></div><p>Cyber Security Engineer with 2+ years of experience in enterprise security platform engineering, specializing in SIEM administration, vulnerability management and endpoint security. Hands-on experience spans IBM QRadar across 500+ MSSP client environments, plus Tenable Nessus, CrowdStrike Falcon, SentinelOne and Trend Micro HBSS.</p></div></section>
-      <section id="skills" className="section reveal"><div className="section-label">02 / capabilities</div><h2>Security stack<span className="accent">_</span></h2><div className="skill-grid">{Object.entries(skills).map(([group,items],i)=><article className="skill-card" key={group}><div className="scan"><span>{`SCAN_0${i+1}`} · {group}</span><span className="scan-bar"/></div><div className="tags">{items.map(item=><span key={item}>{item}</span>)}</div></article>)}</div></section>
+      <section id="skills" className="section reveal"><div className="section-label">02 / capabilities</div><h2>Security stack<span className="accent">_</span></h2><div className="skill-grid">{Object.entries(skills).map(([group,items],i)=><article className="skill-card" key={group}><div className="scan"><span>{`SCAN_0${i+1}`} · {group}</span><span className="scan-bar"/></div><div className="tags">{items.map((item,j)=><span key={item} style={{'--delay':`${j*.35}s`}}>{item}<i/></span>)}</div></article>)}</div></section>
       <section id="certifications" className="section reveal"><div className="section-label">03 / credentials</div><h2>Certifications<span className="accent">_</span></h2><div className="cert-list">{certifications.map(([code,name,date])=><article className="cert" key={code}><div className="cert-code">{code}</div><div><strong>{name}</strong><small>Issued {date}</small></div><span className="verified">VERIFIED</span></article>)}</div></section>
       <section id="experience" className="section reveal"><div className="section-label">04 / experience</div><h2>Operational history<span className="accent">_</span></h2><div className="timeline">{experience.map((job,idx)=><article className="job" key={job.role}><div className="job-marker">0{idx+1}</div><div className="job-main"><div className="job-head"><div><h3>{job.role}</h3><p>{job.company} · {job.location}</p></div><time>{job.dates}</time></div><ul>{job.points.map(point=><li key={point}>{point}</li>)}</ul></div></article>)}</div></section>
       <section id="contact" className="section contact reveal"><div className="section-label">05 / contact</div><h2>Open a secure channel<span className="accent">_</span></h2><div className="contact-box"><div><div className="terminal-line"><span className="accent">&gt;</span> ./connect --with Aditya</div><p>For cybersecurity opportunities, security engineering conversations or professional collaboration.</p></div><div className="contact-links"><a href="mailto:singhaditya2608@gmail.com">singhaditya2608@gmail.com</a><a href="https://linkedin.com/in/adityak2608" target="_blank" rel="noreferrer">LinkedIn ↗</a><a href="https://github.com/AdityaK2608" target="_blank" rel="noreferrer">GitHub ↗</a></div></div></section>

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
+import './tool-logos.css';
 
 const toolStream = [
   ['QRADAR', 'SIEM', 'correlation-engine', 'ONLINE', 'QR'],
